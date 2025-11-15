@@ -21,24 +21,24 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: 'npm'
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
-      run: npx playwright@1.35.0 install --with-deps
+      run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npm run test-ui-c
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: index.html
-        path: playwright-report/index.html
+        name: playwright-report
+        path: playwright-report/
         retention-days: 30
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results
@@ -49,4 +49,3 @@ jobs:
       with:
         status: ${{ job.status }}
         config: .github/config/slack.yml
-        
