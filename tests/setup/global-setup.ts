@@ -12,6 +12,15 @@ async function globalSetup(config: FullConfig) {
 
   await page.goto(baseURL+uiPages.login);
   await loginPage.doLogin(user, password);
+  // Wait for navigation after login
+  await page.waitForURL(/.*profile/, { timeout: 10000 }).catch(async () => {
+    // If navigation fails, check for error message
+    const errorMessage = await loginPage.messagePanel.textContent();
+    if (errorMessage) {
+      throw new Error(`Login failed: ${errorMessage}`);
+    }
+    throw new Error('Login failed: Did not navigate to profile page');
+  });
   await loginPage.checkLoggedIn();
   await page.context().storageState({ path: storageState as string });
   await browser.close();
